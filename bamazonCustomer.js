@@ -20,13 +20,12 @@ connection.connect(function(err) {
             console.log('Welcome to Bamazon!');
         });
     }).then(function(res) {
-            console.table(res);
+        console.table(res);
     }).then(function() {
         return enter();
     }).catch(function(err) {
         console.log(err);
     });
-    // connection.end();
 });
 
 // enter the store
@@ -72,7 +71,7 @@ function shop() {
             function(err, res) {
                 if (err) reject(err);
                 resolve(res);
-                console.log('ITEM: ', res);
+                console.log(res);
                 var stock = res[0].stock;
                 console.log('STOCK: ', stock);
                 if (Number(stock) > Number(quantity)) {
@@ -81,6 +80,7 @@ function shop() {
                     return updateStock(itemId, stock);
                 } else {
                     console.log('INSUFFICIENT QUANTITY IN STOCK');
+                    connection.end();
                 }
             });
         });
@@ -90,12 +90,14 @@ function shop() {
 // update inventory
 function updateStock(itemId, stock){
     new Promise(function(resolve, reject){
-        connection.query('UPDATE products SET stock = stock WHERE ?',
-        [{id: itemId}]),
+        connection.query('UPDATE products SET ? WHERE ?',
+        [{stock: stock},
+        {id: itemId}],
         function(err, res){
             if (err) reject(err);
-            console.table(res);
+            console.log(res);
             resolve(res);
-        };
+        });
+        connection.end();
     });  
 }
