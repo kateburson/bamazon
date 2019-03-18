@@ -8,7 +8,7 @@ var connection = mysql.createConnection({
     database: 'bamazon_DB'
 });
 
-//initial connection to the mysql database
+// initial connection to the mysql database
 connection.connect(function(err) {
     // Throw error if it errors
     if (err) throw err;
@@ -26,9 +26,10 @@ connection.connect(function(err) {
     }).catch(function(err) {
         console.log(err);
     });
+    // connection.end();
 });
 
-//function to enter the store
+// enter the store
 function enter() {
     inquirer.prompt([
         {
@@ -47,7 +48,7 @@ function enter() {
     })
 }
 
-//function to make a purchase and deal with inventory
+// make a purchase
 function shop() {
     inquirer.prompt([
         {
@@ -71,31 +72,29 @@ function shop() {
             function(err, res) {
                 if (err) reject(err);
                 resolve(res);
-                return checkStock(itemId, quantity);
+                console.log('ITEM: ', res);
+                var stock = res[0].stock;
+                console.log('STOCK: ', stock);
+                if (Number(stock) > Number(quantity)) {
+                    console.log('YOU HAVE PURCHASED: ' + quantity + ' ' + res[0].name);
+                    stock = stock - quantity;
+                    return updateStock(itemId, stock);
+                } else {
+                    console.log('INSUFFICIENT QUANTITY IN STOCK');
+                }
             });
         });
-    connection.end();
     });
 }
 
-function checkStock(itemId, quantity) {
-    var stock = res[itemId-1].stock;
-    console.log(stock);
-    if (Number(stock) > Number(quantity)) {
-        console.log('YOU HAVE PURCHASED' + quantity + ' ' + res[itemId-1].name);
-        updateStock();
-    } else {
-        console.log('INSUFFICIENT QUANTITY IN STOCK');
-    }
-}
-
-function updateStock() {
+// update inventory
+function updateStock(itemId, stock){
     new Promise(function(resolve, reject){
-        stock = Number(stock) - Number(quantity);
-        connection.query('UPDATE products SET stock WHERE ?',
+        connection.query('UPDATE products SET stock = stock WHERE ?',
         [{id: itemId}]),
-        function(err, res) {
+        function(err, res){
             if (err) reject(err);
+            console.table(res);
             resolve(res);
         };
     });  
