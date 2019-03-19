@@ -14,7 +14,7 @@ connection.connect(function(err) {
     if (err) throw err;
     // New promise that selects all data from the table
     new Promise(function(resolve, reject) {
-        connection.query('SELECT * FROM products', function(err, res) {
+        connection.query('SELECT id, name, price FROM products', function(err, res) {
             if (err) reject(err);
             resolve(res);
             console.log('Welcome to Bamazon!');
@@ -61,28 +61,33 @@ function shop() {
             name: 'quantity'
         }
     ]).then(function(inquirerResponse) {
-        new Promise(function(resolve, reject) {
-            var itemId = inquirerResponse.id;
-            var quantity = inquirerResponse.quantity;
-            console.log('ITEM: ' , itemId);
-            console.log('QUANTITY: ', quantity);
-            connection.query('SELECT * FROM products WHERE ?', 
-            {id: itemId},
-            function(err, res) {
-                if (err) reject(err);
-                resolve(res);
-                console.log(res);
-                var stock = res[0].stock;
-                console.log('STOCK: ', stock);
-                if (Number(stock) > Number(quantity)) {
-                    console.log('YOU HAVE PURCHASED: ' + quantity + ' ' + res[0].name);
-                    stock = stock - quantity;
-                    return updateStock(itemId, stock);
-                } else {
-                    console.log('INSUFFICIENT QUANTITY IN STOCK');
-                    connection.end();
-                }
-            });
+        checkStock(inquirerResponse);
+    });
+}
+
+// check inventory
+function checkStock(inquirerResponse) {
+    new Promise(function(resolve, reject) {
+        var itemId = inquirerResponse.id;
+        var quantity = inquirerResponse.quantity;
+        console.log('ITEM: ' , itemId);
+        console.log('QUANTITY: ', quantity);
+        connection.query('SELECT * FROM products WHERE ?', 
+        {id: itemId},
+        function(err, res) {
+            if (err) reject(err);
+            resolve(res);
+            console.log(res);
+            var stock = res[0].stock;
+            console.log('STOCK: ', stock);
+            if (Number(stock) > Number(quantity)) {
+                console.log('YOU HAVE PURCHASED: ' + quantity + ' ' + res[0].name);
+                stock = stock - quantity;
+                return updateStock(itemId, stock);
+            } else {
+                console.log('INSUFFICIENT QUANTITY IN STOCK');
+                connection.end();
+            }
         });
     });
 }
@@ -101,3 +106,4 @@ function updateStock(itemId, stock){
         connection.end();
     });  
 }
+
