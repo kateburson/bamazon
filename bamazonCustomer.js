@@ -68,12 +68,12 @@ function shop() {
 // check inventory
 function checkStock(inquirerResponse) {
     new Promise(function(resolve, reject) {
-        var itemId = inquirerResponse.id;
+        var itemID = inquirerResponse.id;
         var quantity = inquirerResponse.quantity;
-        console.log('ITEM: ' , itemId);
+        console.log('ITEM: ' , itemID);
         console.log('QUANTITY: ', quantity);
         connection.query('SELECT * FROM products WHERE ?', 
-        {id: itemId},
+        {id: itemID},
         function(err, res) {
             if (err) reject(err);
             resolve(res);
@@ -83,7 +83,7 @@ function checkStock(inquirerResponse) {
             if (Number(stock) > Number(quantity)) {
                 console.log('YOU HAVE PURCHASED: ' + quantity + ' ' + res[0].name);
                 stock = stock - quantity;
-                return updateStock(itemId, stock);
+                return updateStock(itemID, stock);
             } else {
                 console.log('INSUFFICIENT QUANTITY IN STOCK');
                 connection.end();
@@ -93,11 +93,11 @@ function checkStock(inquirerResponse) {
 }
 
 // update inventory
-function updateStock(itemId, stock){
+function updateStock(itemID, stock){
     new Promise(function(resolve, reject){
         connection.query('UPDATE products SET ? WHERE ?',
         [{stock: stock},
-        {id: itemId}],
+        {id: itemID}],
         function(err, res){
             if (err) reject(err);
             console.log(res);
