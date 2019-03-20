@@ -7,9 +7,9 @@ USE bamazon_DB;
 CREATE TABLE products(
 	id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	name VARCHAR(50) NOT NULL,
-    department VARCHAR(50),
-    price INT(10) NOT NULL,
-    stock INT(10) NOT NULL
+    department VARCHAR(50) NOT NULL DEFAULT 'misc',
+    price DECIMAL(10,2) NOT NULL DEFAULT 0,
+    stock DECIMAL(10,2) NOT NULL DEFAULT 0
 );
 
 INSERT INTO products(name, department, price, stock)

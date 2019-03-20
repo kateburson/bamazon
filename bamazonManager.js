@@ -124,10 +124,17 @@ function addProduct() {
             name: 'stock' 
         },
     ]).then(function(inquirerResponse) {
+        console.log(inquirerResponse);
         console.log('Adding ' + inquirerResponse.name + ' to product assortment...');
         new Promise(function(resolve, reject) {
-            connection.query('INSERT INTO products',
-            [{name: inquirerResponse.name}, {department: inquirerResponse.dept}, {price: inquirerResponse.price}, {stock: inquirerResponse.stock}],
+            var sql = "INSERT INTO products SET ?";
+            var values = [
+                {name: inquirerResponse.name}, 
+                {department: inquirerResponse.dept}, 
+                {price: Number(inquirerResponse.price)}, 
+                {stock: Number(inquirerResponse.stock)}
+            ];
+            connection.query(sql, values,
             function(err, res) {
                 if (err) reject(err);
                 resolve(res);
