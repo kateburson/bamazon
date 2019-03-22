@@ -7,3 +7,5 @@ Bamazon is an Amazon-like storefront run in the terminal. It utilizes a MySQL da
 ![Bamazon Customer](bamazonCustomer.gif)
 
 ## Bamazon Manager
+
+![Bamazon Manager](bamazonManager.gif)
